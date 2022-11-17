@@ -3,7 +3,7 @@ import pygame
 from Paddle import Paddle
 from Ball import Ball
 from KeyboardController import KeyboardController
-from controllers.SerialGloveController import SerialGloveController
+from SerialGloveController import SerialGloveController
 
 BLACK = 0, 0, 0
 WHITE = 255, 255, 255
