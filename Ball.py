@@ -16,7 +16,7 @@ class Ball(pygame.sprite.Sprite):
         self.velocity = Vector2D(speed, 0)
         self.max_pos = Vector2D(screen_width, screen_height)
 
-        self.surface = pygame.Surface((self.diameter, self.diameter))
+        self.surface = pygame.Surface((self.diameter, self.diameter), pygame.SRCALPHA)
         pygame.draw.circle(self.surface, self.color, (self.radius, self.radius), self.radius)
         self.rect = self.surface.get_rect()
 
