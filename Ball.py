@@ -4,7 +4,7 @@ from Vector2D import Vector2D
 
 
 class Ball(pygame.sprite.Sprite):
-    def __init__(self, screen_width, screen_height, diameter, color):
+    def __init__(self, screen_width, screen_height, diameter, color, speed):
         super(Ball, self).__init__()
 
         self.diameter = diameter
@@ -13,7 +13,7 @@ class Ball(pygame.sprite.Sprite):
 
         self.initial_pos = Vector2D(screen_width / 2, screen_height * (3 / 4))
         self.pos = self.initial_pos.copy()
-        self.velocity = Vector2D(3, 3)
+        self.velocity = Vector2D(speed, 0)
         self.max_pos = Vector2D(screen_width, screen_height)
 
         self.surface = pygame.Surface((self.diameter, self.diameter))
