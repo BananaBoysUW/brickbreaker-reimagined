@@ -20,13 +20,13 @@ class Game:
         self.screen_dimensions = self.width, self.height = 800, 1000
         self.color = BLACK
         self.screen = pygame.display.set_mode(self.screen_dimensions)
-        self.fps = 30
+        self.fps = 90
         self.time_step = 1.0 / self.fps
         self.PPM = 1.0
 
         self.paddle = Paddle(width=60, height=15, color=WHITE, *self.screen_dimensions)
-        self.ball = Ball(diameter=10, color=WHITE, speed=15, starting_pos_ratio=3/4, *self.screen_dimensions)
-        self.ball1 = Ball(diameter=50, color=(150, 150, 150), speed=15, starting_pos_ratio=3/4, *self.screen_dimensions)
+        self.ball = Ball(diameter=10, color=WHITE, speed=5, starting_pos_ratio=3/4, *self.screen_dimensions)
+        self.ball1 = Ball(diameter=50, color=(150, 150, 150), speed=5, starting_pos_ratio=3/4, *self.screen_dimensions)
         self.bricks = Bricks(bg_color=self.color, starting_pos_ratio=3/4, *self.screen_dimensions)
 
         self.controller = self.select_controller()
@@ -38,7 +38,7 @@ class Game:
         if controller.is_active():
             return controller
 
-        return KeyboardController(2)
+        return KeyboardController(1)
 
     def check_collisions(self):
         for ball in [self.ball, self.ball1]:
