@@ -1,11 +1,9 @@
 import pygame
 from pygame.locals import (QUIT, KEYDOWN, K_ESCAPE)
 
-import json
-
 from Paddle import Paddle
 from Ball import Ball
-from Brick import Brick
+from Bricks import Bricks
 from KeyboardController import KeyboardController
 from SerialGloveController import SerialGloveController
 
@@ -19,7 +17,7 @@ class Game:
         pygame.init()
 
         # self.screen_dimensions = self.width, self.height = pygame.display.Info().current_w, pygame.display.Info().current_h - 100
-        self.screen_dimensions = self.width, self.height = 800, 800
+        self.screen_dimensions = self.width, self.height = 800, 1000
         self.color = BLACK
         self.screen = pygame.display.set_mode(self.screen_dimensions)
         self.fps = 30
@@ -27,36 +25,13 @@ class Game:
         self.PPM = 1.0
 
         self.paddle = Paddle(width=60, height=15, color=WHITE, *self.screen_dimensions)
-        self.ball = Ball(diameter=10, color=WHITE, speed=15, *self.screen_dimensions)
-        self.ball1 = Ball(diameter=50, color=(150, 150, 150), speed=15, *self.screen_dimensions)
-        self.bricks = self.get_bricks()
+        self.ball = Ball(diameter=10, color=WHITE, speed=15, starting_pos_ratio=3/4, *self.screen_dimensions)
+        self.ball1 = Ball(diameter=50, color=(150, 150, 150), speed=15, starting_pos_ratio=3/4, *self.screen_dimensions)
+        self.bricks = Bricks(bg_color=self.color, starting_pos_ratio=3/4, *self.screen_dimensions)
 
         self.controller = self.select_controller()
 
         self.clock = pygame.time.Clock()
-
-    def get_bricks(self):
-        with open("rects.json", "r") as f:
-            rects = json.load(f)
-            rects = self.scale(rects)
-            bricks = [Brick(*rect[0], color=rect[1]) for rect in rects]
-
-            return bricks
-
-    def scale(self, rects):
-        # TODO: make scaling take into account height
-        max_x = 0
-        max_y = 0
-
-        for rect in rects:
-            max_x = max(max_x, max(rect[0][0], rect[0][2]))
-            max_y = max(max_y, max(rect[0][1], rect[0][3]))
-
-        scale_factor = self.width / max_x
-
-        rects = [([i * scale_factor for i in r[0]], r[1]) for r in rects]
-
-        return rects
 
     def select_controller(self):
         controller = SerialGloveController()
@@ -65,12 +40,33 @@ class Game:
 
         return KeyboardController(2)
 
+    def check_collisions(self):
+        for ball in [self.ball, self.ball1]:
+            if ball.rect.clipline(self.paddle.rect.topleft, self.paddle.rect.topright) or ball.rect.top <= 0:
+                ball.velocity.reverse_y()
+
+            if ball.rect.right >= ball.max_pos.x or ball.rect.left <= 0:
+                ball.velocity.reverse_x()
+
+            if ball.rect.bottom > ball.max_pos.y:
+                ball.lose()
+
+            for brick in self.bricks.brick_list:
+                remove = False
+                if ball.rect.clipline(brick.rect.topleft, brick.rect.bottomleft) or ball.rect.clipline(brick.rect.topright, brick.rect.bottomright):
+                    ball.velocity.reverse_x()
+                    remove = True
+                if ball.rect.clipline(brick.rect.topleft, brick.rect.topright) or ball.rect.clipline(brick.rect.bottomleft, brick.rect.bottomright):
+                    ball.velocity.reverse_y()
+                    remove = True
+
+                if remove:
+                    self.bricks.remove_brick(brick)
+
     def render(self):
         self.screen.fill(self.color)
 
-        for brick in self.bricks:
-            self.screen.blit(brick.surface, brick.rect)
-
+        self.screen.blit(self.bricks.surface, self.bricks.rect)
         self.screen.blit(self.paddle.surface, self.paddle.rect)
         self.screen.blit(self.ball.surface, self.ball.rect)
         self.screen.blit(self.ball1.surface, self.ball1.rect)
@@ -85,8 +81,11 @@ class Game:
                     running = False
 
             self.paddle.update(self.controller.get_x())
-            self.ball1.update(self.paddle)
-            self.ball.update(self.paddle)
+            self.ball1.update()
+            self.ball.update()
+            self.bricks.update()
+
+            self.check_collisions()
 
             self.render()
 

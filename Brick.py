@@ -1,7 +1,7 @@
 import pygame
 
 
-class Brick((pygame.sprite.Sprite)):
+class Brick(pygame.sprite.Sprite):
     def __init__(self, left, top, width, height, color):
         super(Brick, self).__init__()
 

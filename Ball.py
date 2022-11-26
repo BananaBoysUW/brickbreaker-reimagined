@@ -4,14 +4,14 @@ from Vector2D import Vector2D
 
 
 class Ball(pygame.sprite.Sprite):
-    def __init__(self, screen_width, screen_height, diameter, color, speed):
+    def __init__(self, screen_width, screen_height, diameter, color, speed, starting_pos_ratio):
         super(Ball, self).__init__()
 
         self.diameter = diameter
         self.radius = self.diameter / 2
         self.color = color
 
-        self.initial_pos = Vector2D(screen_width / 2, screen_height * (3 / 4))
+        self.initial_pos = Vector2D(screen_width / 2, screen_height * starting_pos_ratio)
         self.pos = self.initial_pos.copy()
         self.velocity = Vector2D(speed, 0)
         self.max_pos = Vector2D(screen_width, screen_height)
@@ -32,18 +32,6 @@ class Ball(pygame.sprite.Sprite):
     def lose(self):
         self.reset_pos()
 
-    def check_collisions(self, paddle):
-        if self.rect.colliderect(paddle.rect) or self.rect.top <= 0:
-            self.velocity.reverse_y()
-
-        if self.rect.right >= self.max_pos.x or self.rect.left <= 0:
-            self.velocity.reverse_x()
-
-        if self.rect.bottom > self.max_pos.y:
-            self.lose()
-
-    def update(self, paddle):
-        self.check_collisions(paddle)
-
+    def update(self):
         self.pos += self.velocity
         self.update_pos()
