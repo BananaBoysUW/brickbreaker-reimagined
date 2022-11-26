@@ -9,6 +9,17 @@ class Vector2D:
     def __add__(self, other):
         return Vector2D(self.x + other.x, self.y + other.y)
 
+    def __sub__(self, other):
+        return Vector2D(self.x - other.x, self.y - other.y)
+
+    def __mul__(self, other):
+        if isinstance(other, Vector2D):
+            return self.x * other.x + self.y * other.y
+
+    def __rmul__(self, other):
+        if isinstance(other, int) or isinstance(other, float):
+            return Vector2D(self.x * other, self.y * other)
+
     def copy(self):
         return Vector2D(self.x, self.y)
 
@@ -29,6 +40,21 @@ class Vector2D:
         y = self.norm() * math.sin(theta)
         self.x = x
         self.y = y
+
+    def angle_with(self, other):
+        if self.norm() * other.norm() == 0:
+            return math.inf
+
+        return math.acos(self * other / (self.norm() * other.norm()))
+
+    def angle_with_deg(self, other):
+        return math.degrees(self.angle_with(other))
+
+    def proj(self, other):
+        return ((self * other) / (other.norm() ** 2)) * other
+
+    def perp(self, other):
+        return self - self.proj(other)
 
     # TODO
     def set_norm(self):
