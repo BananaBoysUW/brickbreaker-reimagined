@@ -18,10 +18,19 @@ class Bricks(pygame.sprite.Sprite):
 
         self.render()
 
+    def ltrb_rect_to_points(self, rects):
+        rects_as_points = []
+        for rect in rects:
+            (l, t, r, b), color = rect
+            rects_as_points.append((((l, t), (r, t), (r, b), (l, b)), color))
+
+        return rects_as_points
+
     def get_bricks(self):
         with open("rects.json", "r") as f:
             rects = json.load(f)
-            brick_list = [Brick(*rect[0], color=rect[1]) for rect in rects]
+            rects = self.ltrb_rect_to_points(rects)
+            brick_list = [Brick(rect[0], color=rect[1]) for rect in rects]
 
             return brick_list
 
@@ -29,7 +38,7 @@ class Bricks(pygame.sprite.Sprite):
         self.surface.fill(self.bg_color)
 
         for brick in self.brick_list:
-            self.surface.blit(brick.surface, brick.rect)
+            pygame.draw.polygon(self.surface, brick.color, brick.points)
 
     def remove_brick(self, brick):
         self.brick_list.remove(brick)

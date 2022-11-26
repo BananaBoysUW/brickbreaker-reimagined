@@ -2,13 +2,10 @@ import pygame
 
 
 class Brick(pygame.sprite.Sprite):
-    def __init__(self, left, top, width, height, color):
+    def __init__(self, points, color):
         super(Brick, self).__init__()
 
-        self.left = left
-        self.top = top
-        self.width = width
-        self.height = height
+        self.points = points
         self.color = color
 
         self.surface = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
