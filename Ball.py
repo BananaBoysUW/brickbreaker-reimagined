@@ -35,3 +35,6 @@ class Ball(pygame.sprite.Sprite):
     def update(self):
         self.pos += self.velocity
         self.update_pos()
+
+    def center(self):
+        return self.pos + Vector2D(self.radius, self.radius)
