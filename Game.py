@@ -52,15 +52,7 @@ class Game:
                 ball.lose()
 
             for brick in self.bricks.brick_list:
-                remove = False
-                if ball.rect.clipline(brick.rect.topleft, brick.rect.bottomleft) or ball.rect.clipline(brick.rect.topright, brick.rect.bottomright):
-                    ball.velocity.reverse_x()
-                    remove = True
-                if ball.rect.clipline(brick.rect.topleft, brick.rect.topright) or ball.rect.clipline(brick.rect.bottomleft, brick.rect.bottomright):
-                    ball.velocity.reverse_y()
-                    remove = True
-
-                if remove:
+                if brick.collide_detect_ball(ball):
                     self.bricks.remove_brick(brick)
 
     def render(self):

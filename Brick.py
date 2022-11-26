@@ -1,4 +1,7 @@
 import pygame
+import math
+
+from Vector2D import Vector2D
 
 
 class Brick(pygame.sprite.Sprite):
@@ -8,6 +11,39 @@ class Brick(pygame.sprite.Sprite):
         self.points = points
         self.color = color
 
-        self.surface = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
-        self.rect = pygame.draw.rect(self.surface, self.color, (0, 0, self.width, self.height))
-        self.rect.update(self.left, self.top, self.width, self.height)
+        self.point_pairs = lambda: zip(self.points, self.points[1:] + self.points[:1])
+
+        # self.surface = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
+        # self.rect = pygame.draw.rect(self.surface, self.color, (0, 0, self.width, self.height))
+        # self.rect.update(self.left, self.top, self.width, self.height)
+
+    def reflect_ball(self, ball, reflection_axis):
+        ball.velocity = ball.velocity - 2 * ball.velocity.proj(reflection_axis)
+
+    def collide_detect_ball(self, ball):
+        for p1, p2 in self.point_pairs():
+            a = Vector2D(*p1)
+            b = Vector2D(*p2)
+            c = ball.center()
+
+            ab = b - a
+            ac = c - a
+            bc = c - b
+            ba = a - b
+
+            if ac.angle_with_deg(ab) < 90 and bc.angle_with_deg(ba) < 90:
+                perp = ac.perp(ab)
+                if perp.norm() <= ball.radius:
+                    print("collision!")
+                    self.reflect_ball(ball, perp)
+                    return True
+
+            if ac.norm() <= ball.radius:
+                self.reflect_ball(ball, ac)
+                return True
+
+            if bc.norm() <= ball.radius:
+                self.reflect_ball(ball, bc)
+                return True
+
+        return False
