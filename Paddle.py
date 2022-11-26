@@ -16,10 +16,8 @@ class Paddle(pygame.sprite.Sprite):
         self.min_x = 0
         self.max_x = screen_width - self.width
 
-        self.surface = pygame.Surface((self.width, self.height))
-        self.surface.fill(self.color)
-        # pygame.draw.rect(self.surface, self.color, pygame.Rect(self.pos.x, self.pos.y, self.width, self.height))
-        self.rect = self.surface.get_rect()
+        self.surface = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
+        self.rect = pygame.draw.rect(self.surface, self.color, (0, 0, self.width, self.height))
 
         self.reset_pos()
 
