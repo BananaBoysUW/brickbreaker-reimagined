@@ -21,25 +21,9 @@ class Bricks(pygame.sprite.Sprite):
     def get_bricks(self):
         with open("rects.json", "r") as f:
             rects = json.load(f)
-            rects = self.scale(rects)
             brick_list = [Brick(*rect[0], color=rect[1]) for rect in rects]
 
             return brick_list
-
-    def scale(self, rects):
-        # TODO: make scaling take into account height
-        max_x = 0
-        max_y = 0
-
-        for rect in rects:
-            max_x = max(max_x, max(rect[0][0], rect[0][2]))
-            max_y = max(max_y, max(rect[0][1], rect[0][3]))
-
-        scale_factor = self.width / max_x
-
-        rects = [([i * scale_factor for i in r[0]], r[1]) for r in rects]
-
-        return rects
 
     def render(self):
         self.surface.fill(self.bg_color)
