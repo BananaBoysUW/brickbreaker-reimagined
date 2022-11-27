@@ -3,6 +3,10 @@ import json
 
 from Brick import Brick
 
+# Number of blocks for geohash
+BLOCKS_X = 8
+BLOCKS_Y = 8
+
 
 class Bricks(pygame.sprite.Sprite):
     def __init__(self, screen_width, screen_height, starting_pos_ratio, bg_color):
@@ -37,16 +41,13 @@ class Bricks(pygame.sprite.Sprite):
             return brick_list
 
     def get_zones(self):
-        blocksX = 8
-        blocksY = 8
-
-        zone_width = self.width / blocksX
-        zone_height = self.height / blocksY
+        zone_width = self.width / BLOCKS_X
+        zone_height = self.height / BLOCKS_Y
 
         zones = []
 
-        for i in range(blocksX):
-            for j in range(blocksY):
+        for i in range(BLOCKS_X):
+            for j in range(BLOCKS_Y):
                 zones.append(pygame.Rect(i * zone_width, j * zone_height, zone_width, zone_height))
 
         return zones
@@ -82,6 +83,4 @@ class Bricks(pygame.sprite.Sprite):
 
     def get_relevant_bricks(self, ball) -> set:
         zones = self.get_ball_zones(ball)
-        if zones:
-            print(zones)
-        return list(set([brick for zone in zones for brick in self.geohash[zone] if brick]))
+        return list(set([brick for zone in zones for brick in self.geohash[zone]]))
