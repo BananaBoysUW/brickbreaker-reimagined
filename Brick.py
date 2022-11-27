@@ -11,9 +11,9 @@ class Brick(pygame.sprite.Sprite):
         self.points = points
         self.color = color
 
-        self.point_pairs = lambda: zip(self.points, self.points[1:] + self.points[:1])
+        self.zone_numbers = []
 
-        # self.rect = pygame.draw.rect(self.surface, self.color, (0, 0, self.width, self.height))
+        self.point_pairs = lambda: zip(self.points, self.points[1:] + self.points[:1])
 
         left, top, width, height = self.get_rect_vals()
 
@@ -30,6 +30,10 @@ class Brick(pygame.sprite.Sprite):
         height = max(y_vals) - top
 
         return [left, top, width, height]
+
+    def add_zone_number(self, zone_number):
+        if zone_number not in self.zone_numbers:
+            self.zone_numbers.append(zone_number)
 
     def reflect_ball(self, ball, reflection_axis):
         ball.velocity = ball.velocity - 2 * ball.velocity.proj(reflection_axis)

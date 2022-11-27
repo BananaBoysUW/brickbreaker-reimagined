@@ -12,6 +12,8 @@ class Bricks(pygame.sprite.Sprite):
         self.bg_color = bg_color
 
         self.brick_list = self.get_bricks()
+        self.zones = self.get_zones()
+        self.geohash = self.get_geohash()
 
         self.surface = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
         self.rect = self.surface.get_rect()
@@ -34,6 +36,32 @@ class Bricks(pygame.sprite.Sprite):
 
             return brick_list
 
+    def get_zones(self):
+        blocksX = 8
+        blocksY = 8
+
+        zone_width = self.width / blocksX
+        zone_height = self.height / blocksY
+
+        zones = []
+
+        for i in range(blocksX):
+            for j in range(blocksY):
+                zones.append(pygame.Rect(i * zone_width, j * zone_height, zone_width, zone_height))
+
+        return zones
+
+    def get_geohash(self):
+        geohash = []
+        for i, zone in enumerate(self.zones):
+            bricks_in_zone = []
+            for brick in self.brick_list:
+                if zone.colliderect(brick.rect):
+                    brick.add_zone_number(i)
+                    bricks_in_zone.append(brick)
+            geohash.append(bricks_in_zone)
+        return geohash
+
     def render(self):
         self.surface.fill(self.bg_color)
 
@@ -41,10 +69,19 @@ class Bricks(pygame.sprite.Sprite):
             self.surface.blit(brick.image, brick.rect)
 
     def remove_brick(self, brick):
+        for i in brick.zone_numbers:
+            self.geohash[i].remove(brick)
+
         self.brick_list.remove(brick)
 
     def update(self):
         self.render()
 
+    def get_ball_zones(self, ball):
+        return [i for i, zone in enumerate(self.zones) if zone.colliderect(ball.rect)]
+
     def get_relevant_bricks(self, ball) -> set:
-        return [brick for brick in self.brick_list if brick.rect.colliderect(ball.rect)]
+        zones = self.get_ball_zones(ball)
+        if zones:
+            print(zones)
+        return list(set([brick for zone in zones for brick in self.geohash[zone] if brick]))
