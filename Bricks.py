@@ -38,10 +38,13 @@ class Bricks(pygame.sprite.Sprite):
         self.surface.fill(self.bg_color)
 
         for brick in self.brick_list:
-            pygame.draw.polygon(self.surface, brick.color, brick.points)
+            self.surface.blit(brick.image, brick.rect)
 
     def remove_brick(self, brick):
         self.brick_list.remove(brick)
 
     def update(self):
         self.render()
+
+    def get_relevant_bricks(self, ball) -> set:
+        return [brick for brick in self.brick_list if brick.rect.colliderect(ball.rect)]

@@ -57,7 +57,7 @@ class Game:
             if ball.rect.bottom > ball.max_pos.y:
                 ball.lose()
 
-            for brick in self.bricks.brick_list:
+            for brick in self.bricks.get_relevant_bricks(ball):
                 if brick.collide_detect_ball(ball):
                     self.bricks.remove_brick(brick)
 

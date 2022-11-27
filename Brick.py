@@ -1,5 +1,5 @@
 import pygame
-import math
+import numpy as np
 
 from Vector2D import Vector2D
 
@@ -13,9 +13,23 @@ class Brick(pygame.sprite.Sprite):
 
         self.point_pairs = lambda: zip(self.points, self.points[1:] + self.points[:1])
 
-        # self.surface = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
         # self.rect = pygame.draw.rect(self.surface, self.color, (0, 0, self.width, self.height))
-        # self.rect.update(self.left, self.top, self.width, self.height)
+
+        left, top, width, height = self.get_rect_vals()
+
+        self.image = pygame.Surface((width, height), pygame.SRCALPHA)
+        self.rect = pygame.draw.polygon(self.image, self.color, [(x - left, y - top) for x, y in self.points])
+        self.rect.update(left, top, width, height)
+
+    def get_rect_vals(self):
+        x_vals, y_vals = [arr.flatten().tolist() for arr in np.split(np.array(self.points), 2, 1)]
+
+        left = min(x_vals)
+        top = min(y_vals)
+        width = max(x_vals) - left
+        height = max(y_vals) - top
+
+        return [left, top, width, height]
 
     def reflect_ball(self, ball, reflection_axis):
         ball.velocity = ball.velocity - 2 * ball.velocity.proj(reflection_axis)
