@@ -42,11 +42,17 @@ class Game:
 
     def check_collisions(self):
         for ball in [self.ball, self.ball1]:
-            if ball.rect.clipline(self.paddle.rect.topleft, self.paddle.rect.topright) or ball.rect.top <= 0:
-                ball.velocity.reverse_y()
+            if ball.rect.clipline(self.paddle.rect.topleft, self.paddle.rect.topright):
+                ball.velocity.y = -1 * abs(ball.velocity.y)
 
-            if ball.rect.right >= ball.max_pos.x or ball.rect.left <= 0:
-                ball.velocity.reverse_x()
+            if ball.rect.top <= 0:
+                ball.velocity.y = abs(ball.velocity.y)
+
+            if ball.rect.right >= ball.max_pos.x:
+                ball.velocity.x = -1 * abs(ball.velocity.x)
+
+            if ball.rect.left <= 0:
+                ball.velocity.x = abs(ball.velocity.x)
 
             if ball.rect.bottom > ball.max_pos.y:
                 ball.lose()
