@@ -13,7 +13,7 @@ WHITE = 255, 255, 255
 
 
 class Game:
-    def __init__(self):
+    def __init__(self, mode, image_path):
         pygame.init()
 
         # self.screen_dimensions = self.width, self.height = pygame.display.Info().current_w, pygame.display.Info().current_h - 100
@@ -27,7 +27,7 @@ class Game:
         self.paddle = Paddle(width=60, height=15, color=WHITE, *self.screen_dimensions)
         self.ball = Ball(diameter=10, color=WHITE, speed=5, starting_pos_ratio=3/4, *self.screen_dimensions)
         self.ball1 = Ball(diameter=50, color=(150, 150, 150), speed=5, starting_pos_ratio=3/4, *self.screen_dimensions)
-        self.bricks = Bricks(bg_color=self.color, starting_pos_ratio=3/4, *self.screen_dimensions)
+        self.bricks = Bricks(bg_color=self.color, starting_pos_ratio=3/4, mode=mode, image_path=image_path, *self.screen_dimensions)
 
         self.controller = self.select_controller()
 

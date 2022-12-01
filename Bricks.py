@@ -2,6 +2,9 @@ import pygame
 import json
 
 from Brick import Brick
+from MapMode import MapMode
+import QuadTree
+import ShapeDetection
 
 # Number of blocks for geohash
 BLOCKS_X = 8
@@ -9,13 +12,13 @@ BLOCKS_Y = 8
 
 
 class Bricks(pygame.sprite.Sprite):
-    def __init__(self, screen_width, screen_height, starting_pos_ratio, bg_color):
+    def __init__(self, screen_width, screen_height, starting_pos_ratio, bg_color, mode, image_path):
         super(Bricks, self).__init__()
         self.width = screen_width
         self.height = screen_height * starting_pos_ratio
         self.bg_color = bg_color
 
-        self.brick_list = self.get_bricks()
+        self.brick_list = self.get_bricks(mode, image_path)
         self.zones = self.get_zones()
         self.geohash = self.get_geohash()
 
@@ -24,21 +27,16 @@ class Bricks(pygame.sprite.Sprite):
 
         self.render()
 
-    def ltrb_rect_to_points(self, rects):
-        rects_as_points = []
-        for rect in rects:
-            (l, t, r, b), color = rect
-            rects_as_points.append((((l, t), (r, t), (r, b), (l, b)), color))
+    def get_bricks(self, mode, image_path):
+        rects = None
 
-        return rects_as_points
+        if mode == MapMode.QUADTREE:
+            rects = QuadTree.convert(image_path)
 
-    def get_bricks(self):
-        with open("rects.json", "r") as f:
-            rects = json.load(f)
-            rects = self.ltrb_rect_to_points(rects)
-            brick_list = [Brick(rect[0], color=rect[1]) for rect in rects]
+        if mode == MapMode.OPENCV:
+            rects = ShapeDetection.convert(image_path)
 
-            return brick_list
+        return [Brick(*rect) for rect in rects]
 
     def get_zones(self):
         zone_width = self.width / BLOCKS_X
