@@ -4,7 +4,7 @@ Credit: https://github.com/fogleman/Quads
 
 from PIL import Image, ImageDraw
 import heapq
-import sys
+import utils
 
 MODE_RECTANGLE = 1
 MODE_ELLIPSE = 2
@@ -128,10 +128,6 @@ class Model:
             self.push(child)
             self.error_sum += child.error * child.area
 
-    def ltrb_rect_to_point(self, rect):
-        l, t, r, b = rect
-        return ((l, t), (r, t), (r, b), (l, b))
-
     def render(self, path, max_depth=None):
         m = OUTPUT_SCALE
         dx, dy = (PADDING, PADDING)
@@ -145,7 +141,7 @@ class Model:
             l, t, r, b = quad.box
             box = (l * m + dx, t * m + dy, r * m - 1, b * m - 1)
 
-            rects.append((self.ltrb_rect_to_point(box), quad.color))
+            rects.append((utils.ltrb_rect_to_point(box), quad.color))
 
             if MODE == MODE_ELLIPSE:
                 draw.ellipse(box, quad.color)

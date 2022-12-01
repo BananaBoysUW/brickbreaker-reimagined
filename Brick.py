@@ -1,7 +1,6 @@
 import pygame
 import numpy as np
-
-from Vector2D import Vector2D
+import utils
 
 
 class Brick(pygame.sprite.Sprite):
@@ -13,7 +12,7 @@ class Brick(pygame.sprite.Sprite):
 
         self.zone_numbers = []
 
-        self.point_pairs = lambda: zip(self.points, self.points[1:] + self.points[:1])
+        self.lines = utils.points_to_lines(points)
 
         left, top, width, height = self.get_rect_vals()
 
@@ -36,23 +35,4 @@ class Brick(pygame.sprite.Sprite):
             self.zone_numbers.append(zone_number)
 
     def collide_detect_ball(self, ball):
-        for p1, p2 in self.point_pairs():
-            a = Vector2D(*p1)
-            b = Vector2D(*p2)
-            c = ball.center()
-
-            ab = b - a
-            ac = c - a
-            bc = c - b
-            ba = a - b
-
-            if ac.angle_with_deg(ab) < 90 and bc.angle_with_deg(ba) < 90:
-                perp = ac.perp(ab)
-                if perp.norm() <= ball.radius:
-                    return perp
-
-            if ac.norm() <= ball.radius:
-                return ac
-
-            if bc.norm() <= ball.radius:
-                return bc
+        return utils.collide_detect_polygon_circle(self.lines, ball.center(), ball.radius)
