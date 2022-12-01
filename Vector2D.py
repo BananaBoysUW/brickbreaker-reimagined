@@ -41,6 +41,15 @@ class Vector2D:
     def set_angle_deg(self, theta):
         self.set_angle(math.radians(theta))
 
+    def rotate_ccw(self, theta):
+        x = self.x
+        y = self.y
+        self.x = (math.cos(theta) * x) - (math.sin(theta) * y)
+        self.y = (math.sin(theta) * x) + (math.cos(theta) * y)
+
+    def rotate_ccw_deg(self, theta):
+        self.rotate_counterclockwise(math.radians(theta))
+
     def angle_with(self, other):
         if self.norm() * other.norm() == 0:
             return math.inf
