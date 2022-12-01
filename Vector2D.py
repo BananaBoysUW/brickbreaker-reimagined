@@ -32,14 +32,14 @@ class Vector2D:
     def norm(self):
         return math.sqrt(self.x ** 2 + self.y ** 2)
 
-    def set_angle_deg(self, theta):
-        self.set_angle(math.radians(theta))
-
     def set_angle(self, theta):
         x = self.norm() * math.cos(theta)
         y = self.norm() * math.sin(theta)
         self.x = x
         self.y = y
+
+    def set_angle_deg(self, theta):
+        self.set_angle(math.radians(theta))
 
     def angle_with(self, other):
         if self.norm() * other.norm() == 0:
@@ -51,6 +51,9 @@ class Vector2D:
         return math.degrees(self.angle_with(other))
 
     def proj(self, other):
+        if other.norm() == 0:
+            return math.inf
+
         return ((self * other) / (other.norm() ** 2)) * other
 
     def perp(self, other):

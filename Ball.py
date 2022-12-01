@@ -38,3 +38,28 @@ class Ball(pygame.sprite.Sprite):
 
     def center(self):
         return self.pos + Vector2D(self.radius, self.radius)
+
+    def reflect(self, reflection_axis):
+        self.velocity = self.velocity - 2 * self.velocity.proj(reflection_axis)
+
+    def check_collisions(self, paddle, bricks):
+        if self.rect.clipline(paddle.rect.topleft, paddle.rect.topright):
+            self.velocity.y = -1 * abs(self.velocity.y)
+
+        if self.rect.top <= 0:
+            self.velocity.y = abs(self.velocity.y)
+
+        if self.rect.right >= self.max_pos.x:
+            self.velocity.x = -1 * abs(self.velocity.x)
+
+        if self.rect.left <= 0:
+            self.velocity.x = abs(self.velocity.x)
+
+        if self.rect.bottom > self.max_pos.y:
+            self.lose()
+
+        for brick in bricks.get_relevant_bricks(self):
+            collision_axis = brick.collide_detect_ball(self)
+            if collision_axis:
+                self.reflect(collision_axis)
+                bricks.remove_brick(brick)

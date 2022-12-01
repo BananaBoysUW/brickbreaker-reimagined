@@ -35,9 +35,6 @@ class Brick(pygame.sprite.Sprite):
         if zone_number not in self.zone_numbers:
             self.zone_numbers.append(zone_number)
 
-    def reflect_ball(self, ball, reflection_axis):
-        ball.velocity = ball.velocity - 2 * ball.velocity.proj(reflection_axis)
-
     def collide_detect_ball(self, ball):
         for p1, p2 in self.point_pairs():
             a = Vector2D(*p1)
@@ -52,16 +49,10 @@ class Brick(pygame.sprite.Sprite):
             if ac.angle_with_deg(ab) < 90 and bc.angle_with_deg(ba) < 90:
                 perp = ac.perp(ab)
                 if perp.norm() <= ball.radius:
-                    print("collision!")
-                    self.reflect_ball(ball, perp)
-                    return True
+                    return perp
 
             if ac.norm() <= ball.radius:
-                self.reflect_ball(ball, ac)
-                return True
+                return ac
 
             if bc.norm() <= ball.radius:
-                self.reflect_ball(ball, bc)
-                return True
-
-        return False
+                return bc
