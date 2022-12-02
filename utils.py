@@ -18,6 +18,12 @@ def points_to_lines(points):
     return list(zip(points, points[1:] + points[:1]))
 
 
+def ltrb_rect_to_lines(rect):
+    """converts a rectangle represented by top left and bottom right points into a list of lines connecting adjacent vertices"""
+    points = ltrb_rect_to_points(rect)
+    return points_to_lines(points)
+
+
 def collide_detect_polygon_circle(polygon_lines, circle_center, circle_radius):
     """if a collision occurs, returns a Vector2D for the axis of reflection, otherwise None"""
     for p1, p2 in polygon_lines:

@@ -11,23 +11,29 @@ from SerialGloveController import SerialGloveController
 BLACK = 0, 0, 0
 WHITE = 255, 255, 255
 
+WIDTH = 800
+HEIGHT = 1000
+
+FPS = 90
+STARTING_POS_RATIO = 3/4
+OFFSET_ANGLE = 25
+
 
 class Game:
     def __init__(self, mode, image_path):
         pygame.init()
 
         # self.screen_dimensions = self.width, self.height = pygame.display.Info().current_w, pygame.display.Info().current_h - 100
-        self.screen_dimensions = self.width, self.height = 800, 1000
+        self.screen_dimensions = self.width, self.height = WIDTH, HEIGHT
         self.color = BLACK
         self.screen = pygame.display.set_mode(self.screen_dimensions)
-        self.fps = 90
-        self.time_step = 1.0 / self.fps
+        self.time_step = 1.0 / FPS
         self.PPM = 1.0
 
-        self.paddle = Paddle(width=60, height=15, color=WHITE, *self.screen_dimensions)
-        self.ball = Ball(diameter=10, color=WHITE, speed=5, starting_pos_ratio=3/4, *self.screen_dimensions)
-        self.ball1 = Ball(diameter=50, color=(150, 150, 150), speed=5, starting_pos_ratio=3/4, *self.screen_dimensions)
-        self.bricks = Bricks(bg_color=self.color, starting_pos_ratio=3/4, mode=mode, image_path=image_path, *self.screen_dimensions)
+        self.paddle = Paddle(width=80, height=15, color=WHITE, *self.screen_dimensions)
+        self.ball = Ball(diameter=10, color=WHITE, speed=5, starting_pos_ratio=STARTING_POS_RATIO, offset_angle=OFFSET_ANGLE, *self.screen_dimensions)
+        self.ball1 = Ball(diameter=50, color=(150, 150, 150), speed=5, starting_pos_ratio=STARTING_POS_RATIO, offset_angle=OFFSET_ANGLE, *self.screen_dimensions)
+        self.bricks = Bricks(bg_color=self.color, starting_pos_ratio=STARTING_POS_RATIO, mode=mode, image_path=image_path, *self.screen_dimensions)
 
         self.controller = self.select_controller()
 
@@ -70,7 +76,7 @@ class Game:
 
             self.render()
 
-            self.clock.tick(self.fps)
+            self.clock.tick(FPS)
 
 
 if __name__ == "__main__":

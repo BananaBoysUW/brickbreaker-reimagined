@@ -33,6 +33,3 @@ class Brick(pygame.sprite.Sprite):
     def add_zone_number(self, zone_number):
         if zone_number not in self.zone_numbers:
             self.zone_numbers.append(zone_number)
-
-    def collide_detect_ball(self, ball):
-        return utils.collide_detect_polygon_circle(self.lines, ball.center(), ball.radius)

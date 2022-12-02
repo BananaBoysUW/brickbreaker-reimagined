@@ -21,6 +21,14 @@ class Paddle(pygame.sprite.Sprite):
 
         self.reset_pos()
 
+    def lines(self):
+        l, t = self.rect.topleft
+        r, b = self.rect.bottomright
+        return utils.ltrb_rect_to_lines((l, t, r, b))
+
+    def midpoint(self):
+        return self.pos.x + (self.width / 2)
+
     def update_pos(self):
         self.rect.update(self.pos.x, self.pos.y, self.width, self.height)
 

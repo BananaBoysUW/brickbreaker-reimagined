@@ -1,15 +1,17 @@
 import pygame
 import random
+import utils
 from Vector2D import Vector2D
 
 
 class Ball(pygame.sprite.Sprite):
-    def __init__(self, screen_width, screen_height, diameter, color, speed, starting_pos_ratio):
+    def __init__(self, screen_width, screen_height, diameter, color, speed, starting_pos_ratio, offset_angle):
         super(Ball, self).__init__()
 
         self.diameter = diameter
         self.radius = self.diameter / 2
         self.color = color
+        self.offset_angle = offset_angle
 
         self.initial_pos = Vector2D(screen_width / 2, screen_height * starting_pos_ratio)
         self.pos = self.initial_pos.copy()
@@ -43,8 +45,12 @@ class Ball(pygame.sprite.Sprite):
         self.velocity = self.velocity - 2 * self.velocity.proj(reflection_axis)
 
     def check_collisions(self, paddle, bricks):
-        if self.rect.clipline(paddle.rect.topleft, paddle.rect.topright):
-            self.velocity.y = -1 * abs(self.velocity.y)
+        if self.rect.colliderect(paddle.rect):
+            paddle_reflection_axis = utils.collide_detect_polygon_circle(paddle.lines(), self.center(), self.radius)
+            if paddle_reflection_axis:
+                self.reflect(paddle_reflection_axis)
+                offset_percent = (self.center().x - paddle.midpoint()) / (paddle.width / 2)
+                self.velocity.rotate_ccw_deg(offset_percent * self.offset_angle)
 
         if self.rect.top <= 0:
             self.velocity.y = abs(self.velocity.y)
@@ -59,7 +65,7 @@ class Ball(pygame.sprite.Sprite):
             self.lose()
 
         for brick in bricks.get_relevant_bricks(self):
-            collision_axis = brick.collide_detect_ball(self)
-            if collision_axis:
-                self.reflect(collision_axis)
+            reflection_axis = utils.collide_detect_polygon_circle(brick.lines, self.center(), self.radius)
+            if reflection_axis:
+                self.reflect(reflection_axis)
                 bricks.remove_brick(brick)

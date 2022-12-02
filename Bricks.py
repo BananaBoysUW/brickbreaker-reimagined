@@ -79,6 +79,6 @@ class Bricks(pygame.sprite.Sprite):
     def get_ball_zones(self, ball):
         return [i for i, zone in enumerate(self.zones) if zone.colliderect(ball.rect)]
 
-    def get_relevant_bricks(self, ball) -> set:
+    def get_relevant_bricks(self, ball):
         zones = self.get_ball_zones(ball)
         return list(set([brick for zone in zones for brick in self.geohash[zone]]))
