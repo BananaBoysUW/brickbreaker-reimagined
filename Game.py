@@ -10,12 +10,12 @@ from SerialGloveController import SerialGloveController
 
 BLACK = 0, 0, 0
 WHITE = 255, 255, 255
+GREY = 40, 40, 40
 
 WIDTH = 800
-HEIGHT = 1000
 
 FPS = 90
-STARTING_POS_RATIO = 3/4
+STARTING_POS_RATIO = 4/7
 OFFSET_ANGLE = 25
 
 
@@ -23,12 +23,18 @@ class Game:
     def __init__(self, mode, image_path):
         pygame.init()
 
-        # self.screen_dimensions = self.width, self.height = pygame.display.Info().current_w, pygame.display.Info().current_h - 100
-        self.screen_dimensions = self.width, self.height = WIDTH, HEIGHT
+        display_width = pygame.display.Info().current_w
+        display_height = pygame.display.Info().current_h
+
+        self.screen_dimensions = self.width, self.height = WIDTH, display_height
         self.color = BLACK
-        self.screen = pygame.display.set_mode(self.screen_dimensions)
-        self.time_step = 1.0 / FPS
-        self.PPM = 1.0
+
+        self.entire_screen = pygame.display.set_mode(self.screen_dimensions, pygame.FULLSCREEN)
+        self.entire_screen.fill(GREY)
+
+        self.screen = pygame.Surface((self.width, self.height))
+        self.rect = self.screen.get_rect()
+        self.rect.move_ip(((display_width - self.width) / 2, 0))
 
         self.paddle = Paddle(width=80, height=15, color=WHITE, *self.screen_dimensions)
         self.ball = Ball(diameter=10, color=WHITE, speed=5, starting_pos_ratio=STARTING_POS_RATIO, offset_angle=OFFSET_ANGLE, *self.screen_dimensions)
@@ -48,9 +54,7 @@ class Game:
 
     def check_collisions(self):
         for ball in [self.ball, self.ball1]:
-            vibrate = ball.check_collisions(self.paddle, self.bricks)
-            if vibrate:
-                self.controller.vibrate()
+            ball.check_collisions(self.paddle, self.bricks)
 
     def render(self):
         self.screen.fill(self.color)
@@ -59,6 +63,8 @@ class Game:
         self.screen.blit(self.paddle.surface, self.paddle.rect)
         self.screen.blit(self.ball.surface, self.ball.rect)
         self.screen.blit(self.ball1.surface, self.ball1.rect)
+
+        self.entire_screen.blit(self.screen, self.rect)
 
         pygame.display.flip()
 

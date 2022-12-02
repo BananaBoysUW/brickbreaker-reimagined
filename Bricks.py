@@ -15,7 +15,7 @@ class Bricks(pygame.sprite.Sprite):
     def __init__(self, screen_width, screen_height, starting_pos_ratio, bg_color, mode, image_path):
         super(Bricks, self).__init__()
         self.width = screen_width
-        self.height = screen_height * starting_pos_ratio
+        self.height = int(screen_height * starting_pos_ratio)
         self.bg_color = bg_color
 
         self.brick_list = self.get_bricks(mode, image_path)
@@ -31,10 +31,10 @@ class Bricks(pygame.sprite.Sprite):
         rects = None
 
         if mode == MapMode.QUADTREE:
-            rects = QuadTree.convert(image_path)
+            rects = QuadTree.convert(image_path, self.width, self.height)
 
         if mode == MapMode.OPENCV:
-            rects = ShapeDetection.convert(image_path)
+            rects = ShapeDetection.convert(image_path, self.width, self.height)
 
         return [Brick(*rect) for rect in rects]
 

@@ -20,9 +20,6 @@ ERROR_RATE = 0.5
 AREA_POWER = 0.25
 OUTPUT_SCALE = 1
 
-WIDTH = 800
-HEIGHT = 750
-
 
 def weighted_average(hist):
     total = sum(hist)
@@ -98,8 +95,8 @@ class Quad:
 
 
 class Model:
-    def __init__(self, path):
-        self.im = Image.open(path).convert('RGB').resize((WIDTH, HEIGHT))
+    def __init__(self, path, width, height):
+        self.im = Image.open(path).convert('RGB').resize((width, height))
         self.width, self.height = self.im.size
         self.heap = []
         self.root = Quad(self, (0, 0, self.width, self.height), 0)
@@ -156,8 +153,8 @@ class Model:
         return rects
 
 
-def convert(image_path):
-    model = Model(image_path)
+def convert(image_path, width, height):
+    model = Model(image_path, width, height)
     previous = None
     for i in range(ITERATIONS):
         error = model.average_error()

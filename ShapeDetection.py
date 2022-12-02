@@ -1,10 +1,10 @@
 import cv2
 
 
-def convert(image_path):
+def convert(image_path, width, height):
     # reading image
     img = cv2.imread(image_path)
-    img = cv2.resize(img, (800, 750))
+    img = cv2.resize(img, (width, height))
 
     # converting image into grayscale image
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
