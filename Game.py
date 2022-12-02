@@ -75,7 +75,9 @@ class Game:
 
     def check_collisions(self):
         for ball in self.balls:
-            ball.check_collisions(self.paddle, self.bricks)
+            vibrate = ball.check_collisions(self.paddle, self.bricks)
+            if vibrate and isinstance(self.controller, SerialGloveController):
+                self.controller.vibrate()
 
     def render(self):
         self.screen.fill(self.color)

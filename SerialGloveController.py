@@ -25,7 +25,7 @@ class SerialGloveController:
         if USB_ports:
             self.arduino = serial.Serial(port=USB_ports[0].device, baudrate=115200, timeout=0.1)
             self.arduino.timeout = 0.05
-            self.arduino.read_all() # clear the serial buffer
+            self.arduino.read_all()  # clear the serial buffer
 
     def display_serial(self):
         while True:
@@ -56,14 +56,15 @@ class SerialGloveController:
         if not data or not data.strip():
             return
 
-        data = data[:-1] # strip newline character
-        
+        data = data[:-1]  # strip newline character
+
         # Attempt to serialize the received data
         paddleOut = paddle_pb2.PaddleOut()
         try:
             data = bytearray.fromhex(data.decode())
-            paddleOut.ParseFromString(data)
-        except:
+            paddleOut.ParseFromString(bytes(data))
+        except Exception as e:
+            print(e)
             return
 
         data = paddleOut.distance
