@@ -37,8 +37,8 @@ class Game:
         self.rect.move_ip(((display_width - self.width) / 2, 0))
 
         self.paddle = Paddle(width=80, height=15, color=WHITE, *self.screen_dimensions)
-        self.ball = Ball(diameter=10, color=WHITE, speed=5, starting_pos_ratio=STARTING_POS_RATIO, offset_angle=OFFSET_ANGLE, *self.screen_dimensions)
-        self.ball1 = Ball(diameter=50, color=(150, 150, 150), speed=5, starting_pos_ratio=STARTING_POS_RATIO, offset_angle=OFFSET_ANGLE, *self.screen_dimensions)
+        self.balls = []
+        self.add_ball(10, WHITE, 5)
         self.bricks = Bricks(bg_color=self.color, starting_pos_ratio=STARTING_POS_RATIO, mode=mode, image_path=image_path, *self.screen_dimensions)
 
         self.controller = self.select_controller()
@@ -52,8 +52,14 @@ class Game:
 
         return KeyboardController(1)
 
+    def add_ball(self, diameter, color, speed):
+        self.balls.append(Ball(diameter=diameter, color=color, speed=speed, starting_pos_ratio=STARTING_POS_RATIO, offset_angle=OFFSET_ANGLE, *self.screen_dimensions))
+
+    def remove_ball(self, ball):
+        self.balls.remove(ball)
+
     def check_collisions(self):
-        for ball in [self.ball, self.ball1]:
+        for ball in self.balls:
             ball.check_collisions(self.paddle, self.bricks)
 
     def render(self):
@@ -61,8 +67,8 @@ class Game:
 
         self.screen.blit(self.bricks.surface, self.bricks.rect)
         self.screen.blit(self.paddle.surface, self.paddle.rect)
-        self.screen.blit(self.ball.surface, self.ball.rect)
-        self.screen.blit(self.ball1.surface, self.ball1.rect)
+        for ball in self.balls:
+            self.screen.blit(ball.surface, ball.rect)
 
         self.entire_screen.blit(self.screen, self.rect)
 
@@ -76,8 +82,8 @@ class Game:
                     running = False
 
             self.paddle.update(self.controller.get_x())
-            self.ball1.update()
-            self.ball.update()
+            for ball in self.balls:
+                ball.update()
             self.bricks.update()
 
             self.check_collisions()
