@@ -1,5 +1,6 @@
 import pygame
 from pygame.locals import (QUIT, KEYDOWN, K_ESCAPE)
+import time
 
 from Paddle import Paddle
 from Ball import Ball
@@ -7,6 +8,7 @@ from Bricks import Bricks
 from KeyboardController import KeyboardController
 from SerialGloveController import SerialGloveController
 
+JINTAO_INTERVAL_SECONDS = 0.2
 
 BLACK = 0, 0, 0
 WHITE = 255, 255, 255
@@ -20,7 +22,7 @@ OFFSET_ANGLE = 25
 
 
 class Game:
-    def __init__(self, mode, image_path):
+    def __init__(self, mode=None, image_path=None, Jintao=False):
         pygame.init()
 
         display_width = pygame.display.Info().current_w
@@ -28,6 +30,7 @@ class Game:
 
         self.screen_dimensions = self.width, self.height = WIDTH, display_height
         self.color = BLACK
+        self.Jintao = Jintao
 
         self.entire_screen = pygame.display.set_mode(self.screen_dimensions, pygame.FULLSCREEN)
         self.entire_screen.fill(GREY)
@@ -39,11 +42,12 @@ class Game:
         self.paddle = Paddle(width=80, height=15, color=WHITE, *self.screen_dimensions)
         self.balls = []
         self.add_ball(10, WHITE, 5)
-        self.bricks = Bricks(bg_color=self.color, starting_pos_ratio=STARTING_POS_RATIO, mode=mode, image_path=image_path, *self.screen_dimensions)
+        self.bricks = Bricks(bg_color=self.color, starting_pos_ratio=STARTING_POS_RATIO, mode=mode, image_path=image_path, Jintao=Jintao, *self.screen_dimensions)
 
         self.controller = self.select_controller()
 
         self.clock = pygame.time.Clock()
+        self.prevTime = time.time()
 
     def select_controller(self):
         controller = SerialGloveController()
@@ -75,11 +79,19 @@ class Game:
         pygame.display.flip()
 
     def run(self):
+        prevTime = time.time()
+
         running = True
         while running:
             for event in pygame.event.get():
                 if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                     running = False
+
+            if self.Jintao:
+                currentTime = time.time()
+                if currentTime - prevTime > JINTAO_INTERVAL_SECONDS:
+                    self.add_ball(10, WHITE, 5)
+                    prevTime = currentTime
 
             self.paddle.update(self.controller.get_x())
             for ball in self.balls:

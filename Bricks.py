@@ -12,13 +12,13 @@ BLOCKS_Y = 8
 
 
 class Bricks(pygame.sprite.Sprite):
-    def __init__(self, screen_width, screen_height, starting_pos_ratio, bg_color, mode, image_path):
+    def __init__(self, screen_width, screen_height, starting_pos_ratio, bg_color, mode, image_path, Jintao):
         super(Bricks, self).__init__()
         self.width = screen_width
         self.height = int(screen_height * starting_pos_ratio)
         self.bg_color = bg_color
 
-        self.brick_list = self.get_bricks(mode, image_path)
+        self.brick_list = self.get_bricks(mode, image_path, Jintao)
         self.zones = self.get_zones()
         self.geohash = self.get_geohash()
 
@@ -27,13 +27,15 @@ class Bricks(pygame.sprite.Sprite):
 
         self.render()
 
-    def get_bricks(self, mode, image_path):
+    def get_bricks(self, mode, image_path, Jintao):
         rects = None
 
-        if mode == MapMode.QUADTREE:
+        if Jintao:
+            with open("jintao.json", "r") as f:
+                rects = json.load(f)
+        elif mode == MapMode.QUADTREE:
             rects = QuadTree.convert(image_path, self.width, self.height)
-
-        if mode == MapMode.OPENCV:
+        elif mode == MapMode.OPENCV:
             rects = ShapeDetection.convert(image_path, self.width, self.height)
 
         return [Brick(*rect) for rect in rects]
