@@ -1,7 +1,7 @@
 import serial
 import serial.tools.list_ports
 import utils
-import time
+import paddle_pb2
 
 
 class SerialGloveController:
@@ -25,7 +25,7 @@ class SerialGloveController:
         if USB_ports:
             self.arduino = serial.Serial(port=USB_ports[0].device, baudrate=115200, timeout=0.1)
             self.arduino.timeout = 0.05
-            self.arduino.read_all()
+            self.arduino.read_all() # clear the serial buffer
 
     def display_serial(self):
         while True:
@@ -45,14 +45,28 @@ class SerialGloveController:
         self.x = self.initial_x
 
     def update(self):
+        # Do not block if the serial buffer is empty
+        if self.arduino.in_waiting == 0:
+            return
+
         if not self.arduino.readable():
             return
-        # self.arduino.read_all()  # Clears the serial buffer (IMPORTANT!)
-        # self.arduino.reset_output_buffer()
+
         data = self.arduino.readline()
         if not data or not data.strip():
             return
-        data = float(data)
+
+        data = data[:-1] # strip newline character
+        
+        # Attempt to serialize the received data
+        paddleOut = paddle_pb2.PaddleOut()
+        try:
+            data = bytearray.fromhex(data.decode())
+            paddleOut.ParseFromString(data)
+        except:
+            return
+
+        data = paddleOut.distance
         data = utils.map_val(self.min_x, self.max_x, 0, 100, data)
 
         if abs(self.x - data) > 30:
@@ -60,6 +74,17 @@ class SerialGloveController:
             return
 
         self.x = data
+
+    def vibrate(self):
+        paddleIn = paddle_pb2.PaddleIn()
+        paddleIn.buzz.durationMillis = 110
+        paddleIn.buzz.motors.extend([1, 2, 3, 4])
+
+        data = paddleIn.SerializeToString()
+
+        data = data.hex().encode()
+        self.arduino.write(data)
+        self.arduino.write('\n'.encode())
 
     def get_x(self):
         """range: [0, 100]"""

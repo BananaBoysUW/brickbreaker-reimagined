@@ -2,6 +2,7 @@ import pygame
 import random
 import utils
 from Vector2D import Vector2D
+from SerialGloveController import SerialGloveController
 
 
 class Ball(pygame.sprite.Sprite):
@@ -45,12 +46,15 @@ class Ball(pygame.sprite.Sprite):
         self.velocity = self.velocity - 2 * self.velocity.proj(reflection_axis)
 
     def check_collisions(self, paddle, bricks):
+        vibrate = False
+
         if self.rect.colliderect(paddle.rect):
             paddle_reflection_axis = utils.collide_detect_polygon_circle(paddle.lines(), self.center(), self.radius)
             if paddle_reflection_axis:
                 self.reflect(paddle_reflection_axis)
                 offset_percent = (self.center().x - paddle.midpoint()) / (paddle.width / 2)
                 self.velocity.rotate_ccw_deg(offset_percent * self.offset_angle)
+                vibrate = True
 
         if self.rect.top <= 0:
             self.velocity.y = abs(self.velocity.y)
@@ -69,3 +73,5 @@ class Ball(pygame.sprite.Sprite):
             if reflection_axis:
                 self.reflect(reflection_axis)
                 bricks.remove_brick(brick)
+
+        return vibrate
