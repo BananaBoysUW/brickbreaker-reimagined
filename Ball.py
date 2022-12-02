@@ -54,6 +54,7 @@ class Ball(pygame.sprite.Sprite):
                 self.reflect(paddle_reflection_axis)
                 offset_percent = (self.center().x - paddle.midpoint()) / (paddle.width / 2)
                 self.velocity.rotate_ccw_deg(offset_percent * self.offset_angle)
+                self.velocity.y = -1 * abs(self.velocity.y)
                 vibrate = True
 
         if self.rect.top <= 0:
