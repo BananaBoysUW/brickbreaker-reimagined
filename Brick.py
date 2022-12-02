@@ -20,6 +20,9 @@ class Brick(pygame.sprite.Sprite):
         self.rect = pygame.draw.polygon(self.image, self.color, [(x - left, y - top) for x, y in self.points])
         self.rect.update(left, top, width, height)
 
+    def toJSON(self):
+        return [self.points, self.color]
+
     def get_rect_vals(self):
         x_vals, y_vals = [arr.flatten().tolist() for arr in np.split(np.array(self.points), 2, 1)]
 
