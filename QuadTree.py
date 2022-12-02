@@ -141,7 +141,7 @@ class Model:
             l, t, r, b = quad.box
             box = (l * m + dx, t * m + dy, r * m - 1, b * m - 1)
 
-            rects.append((utils.ltrb_rect_to_point(box), quad.color))
+            rects.append((utils.ltrb_rect_to_points(box), quad.color))
 
             if MODE == MODE_ELLIPSE:
                 draw.ellipse(box, quad.color)

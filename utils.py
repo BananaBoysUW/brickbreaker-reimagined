@@ -7,7 +7,7 @@ def map_val(inMin, inMax, outMin, outMax, n):
     return outMin + ((n - inMin) / (inMax - inMin)) * (outMax - outMin)
 
 
-def ltrb_rect_to_point(rect):
+def ltrb_rect_to_points(rect):
     """converts a rectangle represented by top left and bottom right points into a list of vertices"""
     l, t, r, b = rect
     return ((l, t), (r, t), (r, b), (l, b))

@@ -48,7 +48,7 @@ class Vector2D:
         self.y = (math.sin(theta) * x) + (math.cos(theta) * y)
 
     def rotate_ccw_deg(self, theta):
-        self.rotate_counterclockwise(math.radians(theta))
+        self.rotate_ccw(math.radians(theta))
 
     def angle_with(self, other):
         if self.norm() * other.norm() == 0:
