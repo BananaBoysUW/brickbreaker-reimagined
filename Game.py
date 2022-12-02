@@ -32,6 +32,10 @@ class Game:
         self.color = BLACK
         self.Jintao = Jintao
 
+        self.win_image = pygame.image.load("win.png")
+        scale_factor = display_height / self.win_image.get_height()
+        self.win_image = pygame.transform.scale_by(self.win_image, scale_factor)
+
         self.entire_screen = pygame.display.set_mode(self.screen_dimensions, pygame.FULLSCREEN)
         self.entire_screen.fill(GREY)
 
@@ -59,6 +63,13 @@ class Game:
     def add_ball(self, diameter, color, speed):
         self.balls.append(Ball(diameter=diameter, color=color, speed=speed, starting_pos_ratio=STARTING_POS_RATIO, offset_angle=OFFSET_ANGLE, *self.screen_dimensions))
 
+    def win(self):
+        width = self.entire_screen.get_rect().right
+        self.entire_screen.fill(BLACK)
+        self.entire_screen.blit(self.win_image, ((width - self.win_image.get_width()) // 2, 0))
+
+        pygame.display.flip()
+
     def remove_ball(self, ball):
         self.balls.remove(ball)
 
@@ -82,10 +93,14 @@ class Game:
         prevTime = time.time()
 
         running = True
+        game_done = False
         while running:
             for event in pygame.event.get():
                 if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                     running = False
+
+            if game_done:
+                continue
 
             if self.Jintao:
                 currentTime = time.time()
@@ -103,6 +118,10 @@ class Game:
             self.render()
 
             self.clock.tick(FPS)
+
+            if self.bricks.empty():
+                self.win()
+                game_done = True
 
 
 if __name__ == "__main__":
