@@ -11,7 +11,7 @@ class SerialGloveController:
 
         # TODO: calibrate these values with a button
         self.min_x = 5
-        self.max_x = 60
+        self.max_x = 100
 
         self.x = self.initial_x
 
