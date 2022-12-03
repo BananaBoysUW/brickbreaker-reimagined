@@ -17,6 +17,12 @@ class SerialGloveController:
 
         self.init_arduino()
 
+        self.motor = 0
+
+    def next_motor(self):
+        self.motor = (self.motor + 1) % 4
+        return self.motor
+
     def init_arduino(self):
         ports = serial.tools.list_ports.comports()
         USB_ports = [i for i in ports if "usbserial" in i.device]
@@ -79,7 +85,7 @@ class SerialGloveController:
     def vibrate(self):
         paddleIn = paddle_pb2.PaddleIn()
         paddleIn.buzz.durationMillis = 110
-        paddleIn.buzz.motors.extend([1, 2, 3, 4])
+        paddleIn.buzz.motors.extend([self.next_motor() + 1])
 
         data = paddleIn.SerializeToString()
 
