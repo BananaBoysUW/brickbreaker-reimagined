@@ -8,7 +8,7 @@ from Bricks import Bricks
 from KeyboardController import KeyboardController
 from SerialGloveController import SerialGloveController
 
-JINTAO_INTERVAL_SECONDS = 0.2
+JINTAO_INTERVAL_SECONDS = 1
 
 BLACK = 0, 0, 0
 WHITE = 255, 255, 255
