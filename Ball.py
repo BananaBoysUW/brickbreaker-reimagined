@@ -45,7 +45,7 @@ class Ball(pygame.sprite.Sprite):
     def reflect(self, reflection_axis):
         self.velocity = self.velocity - 2 * self.velocity.proj(reflection_axis)
 
-    def check_collisions(self, paddle, bricks):
+    def check_collisions(self, paddle, bricks, paddle_sound, brick_sound):
         vibrate = False
 
         if self.rect.colliderect(paddle.rect):
@@ -56,6 +56,7 @@ class Ball(pygame.sprite.Sprite):
                 self.velocity.rotate_ccw_deg(offset_percent * self.offset_angle)
                 self.velocity.y = -1 * abs(self.velocity.y)
                 vibrate = True
+                pygame.mixer.Sound.play(paddle_sound)
 
         if self.rect.top <= 0:
             self.velocity.y = abs(self.velocity.y)
@@ -74,5 +75,6 @@ class Ball(pygame.sprite.Sprite):
             if reflection_axis:
                 self.reflect(reflection_axis)
                 bricks.remove_brick(brick)
+                pygame.mixer.Sound.play(brick_sound)
 
         return vibrate

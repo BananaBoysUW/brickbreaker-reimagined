@@ -36,6 +36,9 @@ class Game:
         scale_factor = display_height / self.win_image.get_height()
         self.win_image = pygame.transform.scale_by(self.win_image, scale_factor)
 
+        self.paddle_sound = pygame.mixer.Sound("sounds/hitPaddleSoundEffect.wav")
+        self.brick_sound = pygame.mixer.Sound("sounds/hitBrickSoundEffect.wav")
+
         self.entire_screen = pygame.display.set_mode(self.screen_dimensions, pygame.FULLSCREEN)
         self.entire_screen.fill(GREY)
 
@@ -75,7 +78,7 @@ class Game:
 
     def check_collisions(self):
         for ball in self.balls:
-            vibrate = ball.check_collisions(self.paddle, self.bricks)
+            vibrate = ball.check_collisions(self.paddle, self.bricks, self.paddle_sound, self.brick_sound)
             if vibrate and isinstance(self.controller, SerialGloveController):
                 self.controller.vibrate()
 
