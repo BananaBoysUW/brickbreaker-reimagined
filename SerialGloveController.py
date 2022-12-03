@@ -76,10 +76,6 @@ class SerialGloveController:
         data = paddleOut.distance
         data = utils.map_val(self.min_x, self.max_x, 0, 100, data)
 
-        if abs(self.x - data) > 30:
-            print(abs(data - self.x))
-            return
-
         self.x = data
 
     def vibrate(self):
